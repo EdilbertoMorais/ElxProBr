@@ -14,7 +14,7 @@ defmodule Assinante do
   def assinantes_pospago(), do: read(:pospago)
 
   def cadastrar(nome, numero, cpf, plano \\ :prepago) do
-    if valida_plano(plano) do
+    if validar_plano(plano) do
       case buscar_assinante(numero) do
         nil ->
           (read(plano) ++ [%__MODULE__{nome: nome, numero: numero, cpf: cpf, plano: plano}])
@@ -46,7 +46,5 @@ defmodule Assinante do
     end
   end
 
-  defp valida_plano(plano) do
-    plano in Map.keys(@assinantes)
-  end
+  defp validar_plano(plano), do: plano in Map.keys(@assinantes)
 end
