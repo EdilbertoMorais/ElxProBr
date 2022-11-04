@@ -14,35 +14,32 @@ defmodule Assinante do
   def assinantes_pospago(), do: read(:pospago)
 
   def cadastrar(nome, numero, cpf, plano \\ :prepago) do
-    if validar_plano(plano) do
-      case buscar_assinante(numero) do
-        nil ->
-          (read(plano) ++ [%__MODULE__{nome: nome, numero: numero, cpf: cpf, plano: plano}])
-          |> :erlang.term_to_binary()
-          |> write(plano)
+    with true <- validar_plano(plano),
+         nil <- buscar_assinante(numero) do
+      (read(plano) ++ [%__MODULE__{nome: nome, numero: numero, cpf: cpf, plano: plano}])
+      |> :erlang.term_to_binary()
+      |> write(plano)
 
-          {:ok, "Assinante #{nome}, cadastrado com sucesso"}
-
-        _assinante ->
-          {:error, "Assinante/Número já cadastrado"}
-      end
+      {:ok, "Assinante #{nome}, cadastrado com sucesso"}
     else
-      {:error, "Plano não cadastrado"}
+      false ->
+        {:error, "Plano não cadastrado"}
+
+      _assinante ->
+        {:error, "Assinante/Número já cadastrado"}
     end
   end
 
-  defp write(lista_assinantes, plano) do
-    File.write!(@assinantes[plano], lista_assinantes)
-  end
+  defp write(lista_assinantes, plano), do: File.write!(@assinantes[plano], lista_assinantes)
 
   def read(plano) do
-    case File.read(@assinantes[plano]) do
-      {:ok, assinantes} ->
-        assinantes
-        |> :erlang.binary_to_term()
-
-      {:error, :enoent} ->
-        {:error, "Plano não cadastrado"}
+    with true <- validar_plano(plano),
+         {:ok, assinantes} <- File.read(@assinantes[plano]) do
+      assinantes
+      |> :erlang.binary_to_term()
+    else
+      _ ->
+        {:error, "PLANO NÃO CADASTRADO"}
     end
   end
 
