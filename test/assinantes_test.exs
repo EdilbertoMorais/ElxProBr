@@ -77,8 +77,6 @@ defmodule AssinantesTest do
     end
 
     test "retorna um erro quando o plano buscado não estiver cadastrado" do
-      Telefonia.start()
-
       assert Assinante.read(:naocadastrado) == {:error, "PLANO NÃO CADASTRADO"}
     end
   end
