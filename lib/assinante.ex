@@ -166,6 +166,18 @@ defmodule Assinante do
 
   defp write(lista_assinantes, plano), do: File.write!(@assinantes[plano], lista_assinantes)
 
+  def deletar(numero) do
+    assinante = buscar_assinante(numero)
+
+    result_delete =
+      assinantes()
+      |> List.delete(assinante)
+      |> :erlang.term_to_binary()
+      |> write(assinante.plano)
+
+    {result_delete, "Assinante #{assinante.nome} deletado com sucesso!"}
+  end
+
   @doc """
   Função que lê os arquivos `prepago.txt` e `pospago.txt`, onde são armazenados
     a lista de assinantes conforme o plano informado.

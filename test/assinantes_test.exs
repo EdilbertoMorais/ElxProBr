@@ -80,4 +80,11 @@ defmodule AssinantesTest do
       assert Assinante.read(:naocadastrado) == {:error, "PLANO NÃO CADASTRADO"}
     end
   end
+
+  describe "delete" do
+    test "deve deletar um assinante" do
+      Assinante.cadastrar("Teste1", "1", "1", :prepago)
+      assert Assinante.deletar("1") == {:ok, "Assinante Teste1 deletado com sucesso!"}
+    end
+  end
 end
