@@ -166,16 +166,41 @@ defmodule Assinante do
 
   defp write(lista_assinantes, plano), do: File.write!(@assinantes[plano], lista_assinantes)
 
+  @doc """
+  Função usada para deletar o assinante.
+
+  ##  Parametros da função
+
+  - numero: parametro do numero que é usado no cadastro do assinante
+
+  ## Informações Adicionais
+
+  - Caso o numero informado nao seja cadastrado, um erro é devolvido\n
+    `{:error, "Assinante não encontrado"}`
+
+  ## Exemplo
+      #cadastrando assinante
+      iex> Assinante.cadastrar("Edilberto", "123", "123")
+      {:ok, "Assinante Edilberto, cadastrado com sucesso"}
+      #deletando assinante
+      iex> Assinante.deletar ("123")
+      {:ok, "Assinante Edilberto deletado com sucesso!"}
+
+  """
+
   def deletar(numero) do
-    assinante = buscar_assinante(numero)
+    case buscar_assinante(numero) do
+      %Assinante{} = assinante ->
+        assinantes()
+        |> List.delete(assinante)
+        |> :erlang.term_to_binary()
+        |> write(assinante.plano)
 
-    result_delete =
-      assinantes()
-      |> List.delete(assinante)
-      |> :erlang.term_to_binary()
-      |> write(assinante.plano)
+        {:ok, "Assinante #{assinante.nome} deletado com sucesso!"}
 
-    {result_delete, "Assinante #{assinante.nome} deletado com sucesso!"}
+      _ ->
+        {:error, "Assinante não encontrado"}
+    end
   end
 
   @doc """

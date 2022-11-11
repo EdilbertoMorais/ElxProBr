@@ -86,5 +86,9 @@ defmodule AssinantesTest do
       Assinante.cadastrar("Teste1", "1", "1", :prepago)
       assert Assinante.deletar("1") == {:ok, "Assinante Teste1 deletado com sucesso!"}
     end
+
+    test "dever retornar um erro quando o numero a ser deletado nao for encontrado" do
+      assert Assinante.deletar("2") == {:error, "Assinante não encontrado"}
+    end
   end
 end
